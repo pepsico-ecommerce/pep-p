@@ -1,0 +1,32 @@
+{
+  "name": "pep-p",
+  "version": "1.0.0",
+  "description": "custom element",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:demo": "webpack-dev-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pepsico-ecommerce/pep-p.git"
+  },
+  "author": "Chris Richards",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pepsico-ecommerce/pep-p/issues"
+  },
+  "homepage": "https://github.com/pepsico-ecommerce/pep-p#readme",
+  "dependencies": {
+    "@juggle/resize-observer": "^3.2.0",
+    "uce": "^1.11.10"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.3",
+    "@babel/preset-env": "^7.12.1",
+    "babel-loader": "^8.1.0",
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
+  }
+}

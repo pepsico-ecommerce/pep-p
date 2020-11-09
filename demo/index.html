@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>&lt;pep-p&gt; Custom Element Demos</title>
+  <style>
+    .test {
+      border: thin solid #ddd;
+      margin: 2em;
+      width: 30em;
+      height: 3em;
+    }
+  </style>
+</head>
+<body>
+    <h1>Demos of pep-p</h1>
+
+    <div class="test test--short-text">
+      <pep-p>
+        Short Text Example.
+      </pep-p>
+    </div>
+
+    <div class="test test--med-text">
+      <pep-p>
+        Long text example that should wrap at least a single line. This is to show how the text appears centered regardless to the number of lines displayed.
+      </pep-p>
+    </div>
+
+    <div class="test test--long-text">
+      <pep-p>
+        This text is too long to display all at once. So it will use ellipsis to show the text has been cut off, while staying inside the element. This seemingly easy task, is surprisingly difficult to achive. There are several CSS values that must be set, and even then you won't get the full expected result without some trickery. A pure CSS solution is possible, but creates limits on how the element can be used and shared. A little JS can solve this problem without CSS tricks.
+      </pep-p>
+    </div>
+
+
+    <div class="test test--textarea">
+      <pep-p>
+        <textarea style="width: 100%; height: 100%;">Non text children like textareas can be used inside the pep-p element.</textarea>
+      </pep-p>
+    </div>
+
+    <script src="./webpack.bundle.js"></script>
+</body>
+</html>
