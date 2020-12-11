@@ -1,139 +1,140 @@
-import { define, css, html } from "uce";
-import { ResizeObserver } from "@juggle/resize-observer";
+import { define, css, html } from 'uce';
+import { ResizeObserver } from '@juggle/resize-observer';
 
-/**
- * Returns the element's lineHeight as a number.
- */
-function getLineHeight(elm) {
-  const { lineHeight, fontSize } = window.getComputedStyle(elm);
-  if (lineHeight === "normal") {
-    // Normal line heights vary from browser to browser. The spec recommends
-    // a value between 1.0 and 1.2 of the font size. Using 1.1 to split the diff.
-    return parseFloat(fontSize) * 1.2;
-  }
-  return parseFloat(lineHeight);
-}
-
-function getTextSize(elParent) {
-  const elTest = document.createElement("span");
-  elTest.innerText = "e";
-  elParent.appendChild(elTest);
-  const { width } = elTest.getBoundingClientRect();
-  const height = getLineHeight(elTest);
-  elParent.removeChild(elTest);
-  return {
-    width,
-    height
-  };
-}
+import { removeLastWord } from './removeLastWord';
 
 /**
  * <pep-p>PepsiCo Paragraph Custom Element.</pep-p>
  * Paragraph Element with multiline ellipse support.
+ * Text is trimmed to fit inside the parent element. (via 100% width/height)
  */
-define("pep-p", {
-  // attachShadow: {mode: 'open'},
-  // extends: 'p',
+define('pep-p', {
   style: (selector) => css`
     ${selector} {
-      /* border: thin solid red; */
-      height: 100%;
+      /* Prevent the overflow from flashing */
+      overflow: hidden;
+      /* Need defined width/height, so use the parents values */
+      /* height: 100%; */ /* removed height so text can center in parent. */
       width: 100%;
-      display: flex;
+      display: block;
     }
-
-    ${selector} p {
-      /*overflow: hidden;*/
-
-      height: 100%;
-      width: 100%;
-      margin: 0;
-    }
-
     ${selector} textarea {
       box-sizing: border-box;
     }
   `,
   init() {
-    // on init, start a resize observer so we can update the text trim on resize.
-    const ro = new ResizeObserver(() => this.trimTextContent());
+    // Create a Resize Observer so we can re-adjust the length of the text content
+    // when the element changes size.
+    const ro = new ResizeObserver(() => {
+      this.render();
+    });
+    // Start observing.
     ro.observe(this);
   },
   connected() {
-    // Keep the original children for unmount.
-    this._originalChildNodes = Array.from(this.childNodes) ?? [];
-    // Now render it!
-    this.render();
+    // Create a copy of the children and text before we  start modifying it.
+    this.originalChildNodes = Array.from(this.childNodes).map(node => node.cloneNode(true));
+    this.originalTextContent = this.textContent;
+    // this.setAttribute('tooltip', this.originalTextContent.trim());
+    this.trimTextContent();
   },
   disconnected() {
-    // Restore the original children,
-    this.childNodes = this._originalChildNodes;
+    this.restoreChildren();
   },
 
-  // Renders the children, text context is upgraded.
+  // Restores the original children
+  restoreChildren() {
+    this.innerHTML = '';
+    this.originalChildNodes.forEach(child => this.appendChild(child.cloneNode(true)));
+  },
+
+  // render by updating the trimmed text to match the current size.
   render() {
-    // wrap the text nodes in paragraphs so we can style them.
-    const children = this._originalChildNodes.reduce((list, el) => {
-      if (el.nodeName === "#text") {
-        const isEmpty = el.wholeText.trim().length === 0;
-        if (!isEmpty) {
-          list.push(
-            html`
-              <p>${el.data}</p>
-            `
-          );
-        }
-      } else {
-        list.push(el);
-      }
+    this.removeAttribute('tooltip');
+    // restore the children and then re-trim to the new size.
+    this.restoreChildren();
+    this.trimTextContent();
 
-      return list;
-    }, []);
-
-    // Render all the children.
-    this.html`${children}`;
-
-    // Wait for the browser to repaint so we can get the right size.
-    setTimeout(() => {
-      this.trimTextContent();
-    }, 1);
+    if (this.didTrim) {
+      this.setAttribute('tooltip', this.originalTextContent.trim());
+    }
   },
 
+  // Returns true if the content overflows.
+  get hasOverflow() {
+    if (this.scrollWidth <= this.clientWidth
+       && this.scrollHeight <= this.clientHeight) {
+      return false;
+    }
+
+    return true;
+  },
+  // Returns true if the element has a size.
+  get hasSize() {
+    if (0 === this.scrollWidth || 0 === this.scrollHeight) {
+      return false;
+    }
+    return true;
+  },
+
+  // Trims the text content of the children to make them fit without overflowing.
   trimTextContent() {
-    const childrenToUpdate = Array.from(
-      this.querySelectorAll("p")
-    );
-    const textSize = getTextSize(this);
+    this.didTrim = false;
 
-    // Check each paragraph to see if it needs ellipsis
-    childrenToUpdate.forEach((elChild) => {
-      // If we trimmed in the past, untrim so we can re-calc the size.
-      if (elChild.originalTextContent) {
-        elChild.textContent = elChild.originalTextContent;
-      }
-      // If we have a scroll height difference, then the text overflowed the element.
-      const needsTrimmed = elChild.clientHeight !== elChild.scrollHeight;
-      // Bail if the content fits the element.
-      if (!needsTrimmed) {
-        return;
+    // Skip if the element has no size. We can't trim to an unknown.
+    if (!this.hasSize) {
+      return;
+    }
+    // Loop over each child starting with the last,
+    // untill we are no longer overflowing, or we run out of children.
+    for (let idx=(this.childNodes.length-1);
+        idx >= 0 && this.hasOverflow;
+        idx--) {
+
+      const childElm = this.childNodes[idx];
+
+      // We don't want to change user's input, so skip those elements.
+      if (['TEXTAREA', 'INPUT', 'SELECT'].includes(childElm.nodeName)) {
+        continue;
       }
 
-      // Create the trimmed version.
-      const text = elChild.textContent.trim();
-      const trimmedLength =
-        Math.floor(elChild.clientWidth / textSize.width) *
-        Math.floor(elChild.clientHeight / textSize.height);
-      const trimmedText = text.substring(0, trimmedLength);
-
-      // Save the original text.
-      if (!elChild.originalTextContent) {
-        const { textContent } = elChild;
-        elChild.originalTextContent = textContent;
-        // Set the original text as the tooltip, so the user can hover and read everything.
-        elChild.setAttribute("title", textContent.trim());
+      // We can remove line breaks if we are trying to shrink the content.
+      if (childElm.nodeName === 'BR') {
+        childElm.remove();
+        continue;
       }
-      // Update with the trimmed text.
-      elChild.textContent = trimmedText + "...";
-    });
+
+      // Remove one word at a time until either the content fits,
+      // or we run out of text.
+      let shorterText = childElm.textContent;
+      do {
+        this.didTrim = true;
+        // Remove the last word.
+        shorterText = removeLastWord(shorterText);
+        // update the element so we can check the new size.
+        childElm.textContent = shorterText;
+      }
+      // Stop when we run out of text, or we are no longer overflowing.
+      while(this.hasOverflow && shorterText.length > 0);
+
+      // If the text is empty, remove the element,
+      if ((!shorterText || shorterText.length === 0)) {
+        childElm.remove();
+      }
+    }
+
+    // Check if we did anything.
+    if (this.didTrim) {
+      // Find the last text element so we can add ellipsis.
+      let lastTextElm = this.childNodes[this.childNodes.length-1];
+      while (lastTextElm && lastTextElm.nodeName !== '#text') {
+        lastTextElm = lastTextElm.previousSibling;
+      }
+      // there is a chance there are no text elements left.
+      if (lastTextElm) {
+        lastTextElm.textContent = removeLastWord(lastTextElm.textContent) + ' ...';
+      }
+    }
+
   }
 });
