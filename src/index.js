@@ -54,7 +54,7 @@ define('pep-p', {
     // Clear the tooltip.
     this.removeAttribute('tooltip');
     // Find the minimum height needed to display text.
-    this.innerHTML = 'AEIOU';
+    this.innerHTML = 'ÀEIOUhy';
     this.minHeight = this.scrollHeight;
     // restore the children and then re-trim to the new size.
     this.restoreChildren();
