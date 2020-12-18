@@ -44,13 +44,18 @@ define('pep-p', {
 
   // Restores the original children
   restoreChildren() {
-    this.innerHTML = '';
+    this.innerHTML = ''; // clear out all the children
+    // Create clones of the original children and put them back.
     this.originalChildNodes.forEach(child => this.appendChild(child.cloneNode(true)));
   },
 
   // render by updating the trimmed text to match the current size.
   render() {
+    // Clear the tooltip.
     this.removeAttribute('tooltip');
+    // Find the minimum height needed to display text.
+    this.innerHTML = 'ÀEIOUhy';
+    this.minHeight = this.scrollHeight;
     // restore the children and then re-trim to the new size.
     this.restoreChildren();
     this.trimTextContent();
@@ -63,7 +68,7 @@ define('pep-p', {
   // Returns true if the content overflows.
   get hasOverflow() {
     if (this.scrollWidth <= this.clientWidth
-       && this.scrollHeight <= this.clientHeight) {
+       && this.scrollHeight <= this.minHeight) {
       return false;
     }
 
