@@ -1,6 +1,6 @@
 {
   "name": "pep-p",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "custom element",
   "main": "src/index.js",
   "scripts": {
