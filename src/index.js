@@ -25,11 +25,16 @@ define('pep-p', {
   init() {
     // Create a Resize Observer so we can re-adjust the length of the text content
     // when the element changes size.
-    const ro = new ResizeObserver(() => {
-      this.render();
-    });
-    // Start observing.
-    ro.observe(this);
+    try {
+      this._resizeObserver = new ResizeObserver((elms) => {
+        this.render();
+      });
+      // Start observing.
+      this._resizeObserver.observe(this);
+    }
+    catch(e) {
+      console.log('_resizeObserver error', e, this);
+    }
   },
   connected() {
     // Create a copy of the children and text before we  start modifying it.
@@ -39,7 +44,13 @@ define('pep-p', {
     this.trimTextContent();
   },
   disconnected() {
-    this.restoreChildren();
+    try {
+      this._resizeObserver.disconnect();
+      this.restoreChildren();
+    }
+    catch(e) {
+      console.log('Disconnected error', e, this);
+    }
   },
 
   // Restores the original children
