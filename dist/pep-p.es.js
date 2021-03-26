@@ -1,8 +1,18 @@
-import { define, css, html } from 'uce';
+import { define, css } from 'uce';
 import { ResizeObserver } from '@juggle/resize-observer';
 
-import { removeLastWord } from './removeLastWord';
+/**
+ * Removes the last word from text and returns the new string.
+ * Trims text before starting.
+ * A "word" is text seprated with one or more spaces.
+ * @param  {[type]} text [description]
+ * @return {[type]}      [description]
+ */
+function removeLastWord(text) {
+  return text.trim().substring(0, text.lastIndexOf(' '));
+}
 
+console.log('updated with mjs powers');
 /**
  * <pep-p>PepsiCo Paragraph Custom Element.</pep-p>
  * Paragraph Element with multiline ellipse support.
@@ -23,6 +33,7 @@ define('pep-p', {
     }
   `,
   init() {
+    console.log('init with mjs powers');
     // Create a Resize Observer so we can re-adjust the length of the text content
     // when the element changes size.
     try {
