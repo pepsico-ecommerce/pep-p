@@ -1,12 +1,8 @@
 {
   "name": "pep-p",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "custom element",
-  "main": "src/index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start:demo": "webpack-dev-server"
-  },
+  "main": "dist/pep-p.es.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pepsico-ecommerce/pep-p.git"
@@ -18,15 +14,10 @@
   },
   "homepage": "https://github.com/pepsico-ecommerce/pep-p#readme",
   "dependencies": {
-    "@juggle/resize-observer": "^3.2.0",
-    "uce": "^1.11.10"
+    "@juggle/resize-observer": "^3.3.0",
+    "uce": "^1.16.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.12.3",
-    "@babel/preset-env": "^7.12.1",
-    "babel-loader": "^8.1.0",
-    "webpack": "^4.44.2",
-    "webpack-cli": "^3.3.12",
-    "webpack-dev-server": "^3.11.0"
+    "rollup": "^2.44.0"
   }
 }

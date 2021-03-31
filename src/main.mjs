@@ -33,7 +33,7 @@ define('pep-p', {
       this._resizeObserver.observe(this);
     }
     catch(e) {
-      console.log('_resizeObserver error', e, this);
+      console.log('<pep-p /> _resizeObserver error', e, this);
     }
   },
   connected() {
@@ -49,7 +49,7 @@ define('pep-p', {
       this.restoreChildren();
     }
     catch(e) {
-      console.log('Disconnected error', e, this);
+      console.log('<pep-p /> Disconnected error', e, this);
     }
   },
 
