@@ -3,10 +3,6 @@
   "version": "0.0.5",
   "description": "custom element",
   "main": "dist/pep-p.es.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start:demo": "npx webpack serve"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pepsico-ecommerce/pep-p.git"
