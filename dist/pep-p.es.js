@@ -12,7 +12,6 @@ function removeLastWord(text) {
   return text.trim().substring(0, text.lastIndexOf(' '));
 }
 
-console.log('updated with mjs powers');
 /**
  * <pep-p>PepsiCo Paragraph Custom Element.</pep-p>
  * Paragraph Element with multiline ellipse support.
@@ -33,7 +32,6 @@ define('pep-p', {
     }
   `,
   init() {
-    console.log('init with mjs powers');
     // Create a Resize Observer so we can re-adjust the length of the text content
     // when the element changes size.
     try {
@@ -44,7 +42,7 @@ define('pep-p', {
       this._resizeObserver.observe(this);
     }
     catch(e) {
-      console.log('_resizeObserver error', e, this);
+      console.log('<pep-p /> _resizeObserver error', e, this);
     }
   },
   connected() {
@@ -60,7 +58,7 @@ define('pep-p', {
       this.restoreChildren();
     }
     catch(e) {
-      console.log('Disconnected error', e, this);
+      console.log('<pep-p /> Disconnected error', e, this);
     }
   },
 
