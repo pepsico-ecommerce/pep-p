@@ -49,7 +49,7 @@ define('pep-p', {
     // Create a copy of the children and text before we  start modifying it.
     this.originalChildNodes = Array.from(this.childNodes).map(node => node.cloneNode(true));
     this.originalTextContent = this.textContent;
-    // this.setAttribute('tooltip', this.originalTextContent.trim());
+    this.setAttribute('tooltip', this.originalTextContent.trim());
     this.trimTextContent();
   },
   disconnected() {
@@ -79,6 +79,10 @@ define('pep-p', {
     // restore the children and then re-trim to the new size.
     this.restoreChildren();
     this.trimTextContent();
+
+    if (!this.didTrim) {
+      this.removeAttribute('tooltip');
+    }
 
     if (this.didTrim) {
       this.setAttribute('tooltip', this.originalTextContent.trim());
