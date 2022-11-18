@@ -13,6 +13,7 @@ define('pep-p', {
       text-overflow: ellipsis;
       white-space: nowrap;
       width: 100%;
+      display: inline-block;
     }
     ${selector} textarea {
       box-sizing: border-box;
