@@ -1,6 +1,6 @@
 {
   "name": "pep-p",
-  "version": "0.0.6",
+  "version": "0.0.8",
   "description": "custom element",
   "main": "dist/pep-p.es.js",
   "engines": {
